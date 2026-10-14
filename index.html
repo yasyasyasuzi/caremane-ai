@@ -1,0 +1,678 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="ケアマネ業務の場面ごとに、AIへの頼み方をまとめた活用帳。コピーしてAIに貼るだけ。りすラボ(株式会社LIS)">
+<meta property="og:type" content="website">
+<meta property="og:title" content="ケアマネAI活用帳｜りすラボ">
+<meta property="og:description" content="ケアマネ業務の場面ごとに、AIへの頼み方をまとめた活用帳。コピーしてAIに貼るだけ。りすラボ(株式会社LIS)">
+<meta property="og:site_name" content="りすラボ">
+<meta name="theme-color" content="#18191B">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>ケアマネAI活用帳</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700&family=BIZ+UDGothic:wght@400;700&display=swap">
+<style>
+/* Layout: クリニックのHPのような白と淡いアクア。余白を広く、線は細く、影はごく薄く。上部に淡いヒーロー、検索とタブ、白いカードが並ぶ */
+:root{
+  --bg:#E6EFEF;
+  --surface:#FFFFFF;
+  --surface2:#EEF6F5;
+  --line:#D3E0DF;
+  --ink:#24394A;
+  --muted:#5E7180;
+  --accent:#1F8A84;
+  --accent-ink:#FFFFFF;
+  --accent-soft:#E3F3F1;
+  --accent-deep:#176C67;
+  --frame:#A8DAD4;
+  --orange:#E8772E;
+  --orange-ink:#C2571A;
+  --orange-soft:#FFEBDC;
+  --code-bg:#F3F8F8;
+  --ok:#2F9461;
+  --ng:#C0504D;
+  --fill:#B4610E;
+  --fill-bg:#FFF3E2;
+  --shadow:0 1px 2px rgba(36,57,74,.05),0 8px 24px rgba(36,57,74,.07);
+  --font-body:"Zen Kaku Gothic New","Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,sans-serif;
+  --font-mono:"BIZ UDGothic","Osaka-Mono",ui-monospace,monospace;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:15.5px;line-height:1.85;font-weight:500;-webkit-font-smoothing:antialiased}
+button,input{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.wrap{max-width:1160px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+
+/* brand bar */
+.bar{background:var(--surface);border-bottom:1px solid var(--line)}
+.bar .wrap{padding-block:14px;display:flex;align-items:center;gap:12px}
+.logo{display:flex;align-items:center;gap:10px;font-weight:700;letter-spacing:.04em}
+.logo .lab{color:#FFFFFF;background:var(--orange);border:1px solid var(--orange);border-radius:999px;padding:1px 12px;font-size:.76rem;letter-spacing:.12em}
+.logo .prod{font-size:1.08rem}
+
+/* hero */
+.hero{background:linear-gradient(180deg,#D7ECE9 0%,var(--bg) 100%)}
+.hero .wrap{padding-block:44px 34px;display:grid;gap:12px}
+.eyebrow{margin:0;color:var(--accent);font-size:.78rem;letter-spacing:.24em;font-weight:700}
+.hero h1 em{font-style:normal;background:linear-gradient(transparent 68%,var(--orange-soft) 68%)}
+.hero h1{margin:0;font-size:clamp(1.6rem,4.2vw,2.3rem);line-height:1.5;letter-spacing:.06em;font-weight:700;text-wrap:balance}
+.hero p.sub{margin:0;color:var(--muted);max-width:40em}
+.points{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
+.points span{background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:4px 14px;font-size:.82rem;color:var(--ink)}
+.points b{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;background:var(--orange);color:#FFFFFF;margin-right:8px;font-family:var(--font-mono);font-size:.76rem}
+
+/* sticky controls */
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:rgba(230,239,239,.94);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+header.top .wrap{padding-block:12px;display:grid;gap:10px}
+.row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.search{flex:1 1 280px;display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:9px 16px;min-width:0}
+.search:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.search svg{flex:none;color:var(--accent)}
+.search input{border:0;outline:0;background:transparent;width:100%;min-width:0}
+.search input::placeholder{color:#8A9AA6}
+.opts{display:flex;gap:16px;align-items:center;font-size:.86rem;color:var(--muted);flex-wrap:wrap}
+.opts label{display:flex;align-items:center;gap:6px;cursor:pointer}
+.opts input{accent-color:var(--accent);width:16px;height:16px}
+.count{font-variant-numeric:tabular-nums;color:var(--muted);font-size:.86rem;margin-left:auto}
+.tabs{display:flex;gap:8px;overflow-x:auto;padding-bottom:2px;scrollbar-width:thin}
+.tab{flex:none;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:5px 16px;font-size:.86rem;cursor:pointer;white-space:nowrap;color:var(--ink);font-weight:500}
+.tab:hover{border-color:var(--orange);color:var(--orange-ink)}
+.tab[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);font-weight:700}
+
+/* STEP 0 */
+.step0{border:1.5px solid var(--frame);background:var(--surface);border-radius:20px;padding:24px;display:grid;gap:14px;box-shadow:var(--shadow);scroll-margin-top:170px}
+.step0.flash{box-shadow:0 0 0 4px var(--accent-soft),var(--shadow)}
+.s0-head{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.badge{background:var(--orange);color:var(--accent-ink);font-family:var(--font-mono);font-weight:700;font-size:.74rem;border-radius:999px;padding:2px 12px;letter-spacing:.1em}
+.s0-head h2{margin:0;font-size:1.2rem;letter-spacing:.04em}
+.s0-ok,.s0-more{display:none}
+.s0-body{display:grid;gap:16px}
+.s0-lead{margin:0;font-size:.94rem;color:var(--muted)}
+.s0-grid{display:grid;gap:16px;grid-template-columns:1fr}
+@media (min-width:820px){.s0-grid{grid-template-columns:1.1fr 1fr}}
+.s0-grid>*{min-width:0}
+.s0-table{border:1px solid var(--line);border-radius:12px;overflow:hidden;font-size:.88rem}
+.tr{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);border-top:1px solid var(--line)}
+.tr:first-child{border-top:0}
+.tr span{padding:8px 12px}
+.tr span+span{border-left:1px solid var(--line);color:var(--accent-deep);font-weight:700}
+.tr.th{background:var(--surface2);font-size:.78rem;color:var(--muted)}
+.tr.th span+span{color:var(--muted);font-weight:500}
+.s0-ex{display:flex;flex-direction:column;gap:6px}
+.exb{border-radius:12px;padding:12px 14px;font-size:.88rem;background:var(--code-bg);border:1px solid var(--line)}
+.exb.ng{background:#FBF1F0;border-color:#F0D6D4}
+.exb.okb{background:#EEF8F2;border-color:#D3EBDD}
+.exb b{display:block;font-size:.78rem;margin-bottom:2px}
+.exb.ng b{color:var(--ng)}
+.exb.okb b{color:var(--ok)}
+.arrow{text-align:center;color:var(--accent)}
+.s0-note{margin:4px 0 0;font-size:.8rem;color:var(--muted)}
+.agree{display:flex;gap:14px;align-items:center;background:var(--accent);color:var(--accent-ink);border-radius:14px;padding:16px 18px;cursor:pointer;font-weight:700;font-size:1.02rem;line-height:1.5;box-shadow:0 6px 16px rgba(31,138,132,.22)}
+.agree:hover{background:var(--accent-deep)}
+.agree input{appearance:none;-webkit-appearance:none;margin:0;flex:none;width:30px;height:30px;border-radius:8px;background:#FFFFFF;border:2px solid #FFFFFF;display:grid;place-items:center;cursor:pointer}
+.agree input::after{content:"";width:9px;height:16px;border:solid var(--accent);border-width:0 4px 4px 0;transform:rotate(45deg) translate(-1px,-2px);opacity:0}
+.agree input:checked::after{opacity:1}
+.agree input:focus-visible{outline:3px solid #FFFFFF;outline-offset:2px}
+.agree small{display:block;font-weight:500;font-size:.8rem;opacity:.9}
+.step0.done{padding:12px 20px;border-radius:14px}
+.step0.done .s0-body{display:none}
+.step0.done .s0-ok{display:inline;color:var(--ok);font-size:.86rem;font-weight:700}
+.step0.done .s0-more{display:inline-block;margin-left:auto;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:3px 14px;font-size:.8rem;cursor:pointer;color:var(--muted)}
+.step0.done.peek .s0-body{display:grid;gap:14px}
+
+/* cards */
+main .wrap{padding-block:24px 56px}
+.grid{display:grid;gap:18px;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));align-items:start}
+@media (max-width:420px){.grid{grid-template-columns:1fr}}
+.card{background:var(--surface);border:1.5px solid var(--frame);border-radius:18px;padding:20px;display:flex;flex-direction:column;gap:12px;min-width:0;box-shadow:var(--shadow);scroll-margin-top:170px;transition:border-color .15s}
+.card:hover{border-color:#7FC6BE}
+.card.open{border-color:var(--accent)}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{font-size:.72rem;border-radius:999px;padding:1px 10px;background:var(--surface2);color:var(--muted)}
+.chip.star{color:var(--orange-ink);background:var(--orange-soft);font-weight:700}
+.card h3{margin:0;font-size:1.1rem;line-height:1.55;letter-spacing:.02em}
+.card .desc{margin:-4px 0 0;color:var(--muted);font-size:.9rem}
+.use{background:var(--surface2);border-radius:12px;padding:12px 14px;font-size:.86rem;color:var(--ink)}
+.use b{color:var(--orange-ink);margin-right:8px}
+.checks{list-style:none;margin:0;padding:0;display:grid;gap:6px;font-size:.88rem}
+.checks li{display:flex;gap:8px}
+.checks li::before{content:"✓";color:var(--accent);font-weight:700}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+.btn{border:1px solid var(--accent);border-radius:999px;padding:7px 18px;font-size:.86rem;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:6px;background:var(--accent);color:var(--accent-ink)}
+.btn.warm{background:var(--orange);border-color:var(--orange)}
+.btn.warm:hover{background:var(--orange-ink);border-color:var(--orange-ink)}
+.btn.ghost{background:var(--surface);color:var(--accent)}
+.btn:hover{background:var(--accent-deep);border-color:var(--accent-deep);color:var(--accent-ink)}
+
+.cmd{background:var(--code-bg);border:1px solid var(--line);border-radius:12px;padding:10px 14px;font-family:var(--font-mono);font-size:.84rem;display:flex;gap:8px;min-width:0}
+.cmd .p{color:var(--accent);flex:none}
+.cmd span{word-break:break-word}
+.cmd .cur{display:inline-block;width:2px;height:1.05em;background:var(--accent);vertical-align:-2px;margin-left:2px;animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.term{background:var(--code-bg);border:1px solid var(--line);border-radius:14px;padding:14px;font-size:.86rem;line-height:1.8;display:flex;flex-direction:column;gap:10px;max-height:400px;overflow:auto}
+.term .me,.term .ai{white-space:pre-wrap;word-break:break-word;border-radius:14px;padding:9px 13px;max-width:92%}
+.term .me{align-self:flex-end;background:var(--accent);color:var(--accent-ink);border-bottom-right-radius:4px}
+.term .ai{align-self:flex-start;background:var(--surface);border:1px solid var(--line);border-bottom-left-radius:4px}
+.term .ai::before{content:"AI";display:block;font-size:.68rem;font-weight:700;color:var(--accent);letter-spacing:.1em}
+.term small{color:var(--muted);font-size:.74rem}
+
+.code{border:1px solid var(--line);border-radius:12px;background:var(--surface);overflow:hidden;min-width:0}
+.code-bar{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 12px;border-bottom:1px solid var(--line);background:var(--surface2);font-size:.78rem;color:var(--muted)}
+.copy{border:1px solid var(--accent);background:var(--surface);color:var(--accent);border-radius:999px;padding:2px 14px;font-size:.78rem;font-weight:700;cursor:pointer;flex:none}
+.copy:hover{background:var(--accent-soft)}
+.copy.done{background:var(--accent);color:var(--accent-ink)}
+.code pre{margin:0;padding:14px;font-family:var(--font-mono);font-size:.84rem;line-height:1.85;white-space:pre-wrap;word-break:break-word;max-height:340px;overflow:auto;color:var(--ink)}
+.code pre mark{background:var(--fill-bg);color:var(--fill);border-radius:4px;padding:0 2px}
+.hint{margin:6px 0 0;font-size:.76rem;color:var(--muted)}
+.hint mark{background:var(--fill-bg);color:var(--fill);border-radius:4px;padding:0 3px}
+.gate{border:1px dashed var(--accent);background:var(--accent-soft);border-radius:12px;padding:14px;display:grid;gap:8px;font-size:.88rem}
+.gate b{color:var(--accent-deep)}
+.safe{color:var(--muted)}
+.locked{grid-column:1/-1;border:1.5px dashed var(--frame);background:var(--surface);border-radius:18px;padding:40px 20px;text-align:center;display:grid;gap:8px;color:var(--muted);font-size:.92rem}
+.locked b{color:var(--ink);font-size:1.04rem}
+
+.none{grid-column:1/-1;text-align:center;color:var(--muted);padding:40px 0}
+footer{background:var(--surface);border-top:1px solid var(--line)}
+footer .wrap{padding-block:28px 40px;color:var(--muted);font-size:.82rem;display:grid;gap:6px}
+.maker{display:flex;gap:8px;align-items:center;flex-wrap:wrap;color:var(--ink)}
+.maker .lab{color:#FFFFFF;background:var(--orange);border:1px solid var(--orange);border-radius:999px;padding:0 10px;font-size:.74rem;font-weight:700;letter-spacing:.1em}
+.copy-r{margin-top:8px;font-size:.76rem;letter-spacing:.06em}
+.toast{position:fixed;z-index:30;left:50%;bottom:calc(22px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:#FFFFFF;padding:9px 20px;border-radius:999px;font-size:.86rem;opacity:0;pointer-events:none;transition:opacity .2s;white-space:nowrap}
+.toast.show{opacity:1}
+@media (prefers-reduced-motion:reduce){.cmd .cur{animation:none}.toast,.card{transition:none}}
+</style>
+</head>
+<body>
+
+<div class="bar"><div class="wrap">
+  <div class="logo"><span class="prod">ケアマネAI活用帳</span></div>
+</div></div>
+
+<section class="hero"><div class="wrap">
+  <p class="eyebrow">CARE MANAGER × AI</p>
+  <h1>ケアマネ業務に、<br><em>AIをもっと身近に。</em></h1>
+  <p class="sub">記録、ケアプラン、家族への連絡。場面ごとのAIへの頼み方をまとめました。コピーしてAIに貼るだけで使えます。</p>
+  <div class="points"><span><b>0</b>個人情報を置き換える</span><span><b>1</b>頼み方をコピー</span><span><b>2</b>AIに貼って送信</span></div>
+</div></section>
+
+<header class="top"><div class="wrap">
+  <div class="row">
+    <label class="search" for="q">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg>
+      <input id="q" type="search" placeholder="例 経過記録 / 担当者会議 / 写真 / 家族" autocomplete="off">
+    </label>
+    <div class="opts">
+      <label for="f-easy"><input id="f-easy" type="checkbox">はじめての人向け</label>
+      <label for="f-star"><input id="f-star" type="checkbox">定番だけ</label>
+    </div>
+    <span class="count" id="count"></span>
+  </div>
+  <nav class="tabs" id="tabs" aria-label="カテゴリ"></nav>
+</div></header>
+
+<main><div class="wrap">
+  <section class="step0" id="step0">
+    <div class="s0-head">
+      <span class="badge">STEP 0</span>
+      <h2>まず、個人情報を置き換える</h2>
+      <span class="s0-ok">✓ 確認済み</span>
+      <button class="s0-more" type="button" id="s0-more">表を見る</button>
+    </div>
+    <div class="s0-body">
+      <p class="s0-lead">ケアマネ業務でAIを使うときの大前提です。AIに貼る前に、必ずこの表で置き換えてから、次の頼み方に進みます。</p>
+      <div class="s0-grid">
+        <div class="s0-table" role="table" aria-label="置き換え表">
+          <div class="tr th" role="row"><span role="columnheader">入れない情報</span><span role="columnheader">置き換え方</span></div>
+          <div class="tr" role="row"><span role="cell">氏名</span><span role="cell">本人／Aさん／長女</span></div>
+          <div class="tr" role="row"><span role="cell">住所・地名</span><span role="cell">市内／自宅／近所のスーパー</span></div>
+          <div class="tr" role="row"><span role="cell">生年月日・年齢</span><span role="cell">80代</span></div>
+          <div class="tr" role="row"><span role="cell">被保険者番号・電話番号</span><span role="cell">入れない</span></div>
+          <div class="tr" role="row"><span role="cell">病院名・医師名</span><span role="cell">かかりつけ医／総合病院</span></div>
+          <div class="tr" role="row"><span role="cell">珍しい病名・出来事の組み合わせ</span><span role="cell">ぼかす</span></div>
+          <div class="tr" role="row"><span role="cell">録音</span><span role="cell">音声のまま渡さない。文字にして置き換えてから</span></div>
+          <div class="tr" role="row"><span role="cell">写真</span><span role="cell">顔・表札・郵便物・書類・薬袋が写っていないか確認</span></div>
+        </div>
+        <div class="s0-ex">
+          <div class="exb ng"><b>✕ 置き換え前</b>田中花子さん(82歳)、吉祥寺本町の自宅。長女の美香さんから、○○病院の山田先生の受診日を変えたいと電話あり。</div>
+          <div class="arrow" aria-hidden="true">↓</div>
+          <div class="exb okb"><b>○ 置き換え後</b>本人(80代女性)、自宅。長女から、かかりつけ医の受診日を変えたいと電話あり。</div>
+          <p class="s0-note">このサイトの頼み方には、置き換え忘れがあったらAIが指摘する一文が最後に入っています。</p>
+        </div>
+      </div>
+      <label class="agree" for="agree"><input id="agree" type="checkbox"><span>置き換えてから使います<small>ここをタップしてチェックすると、頼み方の一覧が表示されます</small></span></label>
+    </div>
+  </section>
+  <div class="grid" id="grid" style="margin-top:16px"></div>
+</div></main>
+
+<footer><div class="wrap">
+  <div>実行イメージは説明用の例です。実際のAIの返答は毎回少しずつ変わります。Claude・ChatGPT・Geminiなど、どのAIでも使えます。</div>
+  <div class="maker"><span class="lab">りすラボ</span><span>ケアマネAI活用帳は、株式会社LISのAI開発部門「りすラボ」の製品です。</span></div>
+  <div class="copy-r">© 2026 株式会社LIS りすラボ</div>
+</div></footer>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+const CATS=["すべて","はじめに","記録・書類","アセスメント・計画","利用者・家族","相談のコツ","気をつけること","慣れてきたら"];
+
+const ITEMS=[
+{id:"what",cat:"はじめに",easy:1,star:1,title:"まずはAIに「何ができる？」と聞く",
+desc:"最初の一歩。自分の仕事を伝えて、手伝えることを挙げてもらいます。",
+use:"アプリを開いて、下の文をそのまま貼り付けるだけ。AIは文章で頼むと文章で返してくれる道具です。",
+prompt:`私は居宅介護支援事業所のケアマネジャーです。
+毎日の仕事でAIに手伝ってもらうとしたら、どんなことが頼めますか？
+具体的な例を5つ、1つ2行くらいで教えてください。`,
+demo:[["me","(上の文を貼り付けて送信)"],["ai","ケアマネ業務で頼めることの例です。\n\n1. 記録の清書…メモや音声入力の文章を、支援経過の文体に整えます\n2. 文書の下書き…主治医への照会文、事業所への連絡文など\n3. 課題の整理…聞き取った内容から生活課題を整理します\n4. 言い換え…制度の説明を、ご本人やご家族向けのやさしい言葉に\n5. 相談相手…支援方針に迷ったとき、別の見方を出します\n\n※個人が特定できる情報は入れずにお使いください。"]]},
+
+{id:"formula",cat:"はじめに",easy:1,star:1,title:"頼み方の型「役割・材料・目的・形」",
+desc:"この4つを入れるだけで、返ってくる文章の質がぐっと上がります。",
+use:"〔 〕の部分を書き換えて使います。このサイトの頼み方は、すべてこの型でできています。",
+prompt:`あなたは〔経験10年の主任介護支援専門員〕です。　← 役割
+次の〔メモ〕をもとに、　← 材料
+〔ご家族に今月の様子を伝える〕文章を、　← 目的
+〔200字以内・です・ます調〕でまとめてください。　← 形
+
+メモ：
+〔ここに貼る〕`,
+demo:[["me","…メモ：デイ週2回継続、入浴拒否なし、歩行やや不安定、食欲あり"],["ai","今月もデイサービスに週2回通われ、入浴も嫌がることなく気持ちよく入られています。食欲もしっかりあり、お元気に過ごされています。一方で、歩くときに少しふらつく場面が見られますので、ご自宅でも段差や夜間のトイレ移動に気をつけていただけると安心です。気になることがあれば、いつでもご相談ください。"]]},
+
+{id:"voice",cat:"はじめに",easy:1,title:"打たずに話す。音声入力で使う",
+desc:"スマホのマイクボタンで話しかければ、訪問直後や移動中でも使えます。",
+use:"入力欄のマイクを押して話します。話し言葉のままで大丈夫。最初に下の一文を送っておくと、言い間違いも整えてくれます。",
+prompt:`今から話す内容を、箇条書きに整理してください。
+「えーと」などの言葉や言い直しは省き、
+聞き取れない部分は〔要確認〕と書いてください。`,
+demo:[["me","(音声入力)えーと、Aさん宅訪問、あ、昨日じゃなくて今日、膝の痛みは前より楽って、あとヘルパーの時間を午前に変えたいって長女さんが"],["ai","・本日、Aさん宅を訪問\n・膝の痛みは以前より軽くなったとのこと\n・長女より、ヘルパーの時間を午前に変更したいとの希望あり"]]},
+
+{id:"voicememo",cat:"はじめに",star:1,title:"ボイスメモで録音して、文字にしてから使う",
+desc:"面談や担当者会議を録音し、スマホで文字起こししてから、置き換えてAIに渡します。",
+use:"録音は記録の手間を大きく減らせますが、個人情報が一番多く含まれる素材です。音声のままAIに渡さず、次の順番を守ります。",
+checks:["録音する前に、本人・家族・出席者の了承を得る","音声ファイルはAIに渡さない(名前や声がそのまま入っている)","iPhoneはボイスメモで文字起こし(iOS 18.4以降・対応機種)。録音の「…」→「文字起こしを表示」→「文字起こしをコピー」","コピーした文字をメモアプリに貼り、「検索して置き換え」で名前を「本人」などに一括で置き換える","AIへの貼り付けは置き換えた文字だけ。終わったら録音と文字起こしは事業所のルールに沿って削除する"],
+prompt:`次の文章は、面談を録音して文字起こししたものです(個人情報は置き換え済み)。
+・話し言葉を整理し、要点を箇条書きにまとめる
+・誰の発言か分かる場合は「本人」「長女」「ケアマネ」と書く
+・聞き取りにくい、意味が通らない部分は〔要確認〕とする
+・話されていないことは書き足さない
+
+文字起こし：
+〔ここに貼る〕`,
+demo:[["me","…文字起こし：えっとですね本人さんはあのー最近は朝起きるのがつらいって言っててでもデイはね行きたいって、長女さんは送り出しが間に合わないことがあるって…"],["ai","・本人：朝起きるのがつらいと話す。デイサービスには行きたい気持ちがある\n・長女：朝の送り出しが間に合わないことがある\n・〔要確認〕起きるのがつらい理由(体調か、睡眠か)"]]},
+
+{id:"keika",cat:"記録・書類",easy:1,star:1,title:"支援経過記録(第5表)の清書",
+desc:"走り書きのメモを、記録らしい文体と項目に整えます。",
+use:"訪問直後のメモや音声入力の文章を貼ります。氏名は「本人」「長女」などに置き換えてから。",
+prompt:`次のメモを、居宅介護支援の支援経過記録(第5表)の文体に整えてください。
+・事実と、ケアマネの判断・今後の対応を分けて書く
+・敬語は使わず、簡潔な記録文にする
+・メモにないことは書き足さない
+・はっきりしない部分は〔要確認〕とする
+
+メモ：
+〔ここに貼る〕`,
+demo:[["me","…メモ：モニタリング訪問。本人、デイ楽しいって。最近夜トイレ3回くらい起きる。長女、転倒心配してる。センサーライトどうかと話した"],["ai","【モニタリング訪問】\n本人より「デイサービスは楽しい」との発言あり。通所は継続できている。\n夜間のトイレ覚醒が3回程度あるとのこと。長女より夜間の転倒を心配する声が聞かれた。\n\n【判断・今後の対応】\n夜間の移動時の転倒リスクがあると考える。センサーライト設置を提案し、福祉用具事業所へ相談予定。夜間頻尿については〔要確認〕次回、主治医への情報提供を検討する。"]]},
+
+{id:"kaigi",cat:"記録・書類",star:1,title:"サービス担当者会議の要点(第4表)",
+desc:"会議中のメモから、検討項目・内容・結論・残った課題を整理します。",
+use:"会議メモか、話した内容を音声入力した文章を貼ります。出席者は職種名に置き換えます。",
+prompt:`次のメモを、サービス担当者会議の要点(第4表)の形に整理してください。
+見出しは「検討した項目」「検討内容」「結論」「残された課題」の4つ。
+発言者は職種名(訪問介護、通所介護、福祉用具など)で書いてください。
+
+メモ：
+〔ここに貼る〕`,
+demo:[["me","…メモ：区変後の会議。通所→週3に増やす案。本人は週2がいいと。訪問介護、入浴は通所でできてるから訪問の入浴介助はなしでいいのでは。福祉用具、歩行器レンタル継続"],["ai","■検討した項目\n1. 区分変更後の通所介護の回数\n2. 訪問介護の内容見直し\n3. 福祉用具の継続\n\n■検討内容\n1. 通所介護を週3回に増やす案について、本人は週2回を希望。\n2. 訪問介護より、入浴は通所介護で行えているため訪問での入浴介助は不要ではないかと意見あり。\n3. 福祉用具より、歩行器の継続利用を提案。\n\n■結論\n通所介護は本人の意向を尊重し週2回で継続…\n\n■残された課題\n入浴以外の訪問介護の内容を次回までに再検討。"]]},
+
+{id:"monitor",cat:"記録・書類",title:"モニタリング記録の下書き",
+desc:"目標に対してどうだったかを、評価の観点でまとめます。",
+use:"短期目標と今月の様子のメモを一緒に貼ると、目標ごとに評価してくれます。",
+prompt:`次の「短期目標」と「今月の様子」をもとに、モニタリング記録の下書きを作ってください。
+目標ごとに「達成状況(達成／一部達成／未達成)」「根拠となる様子」「今後の方針」を書いてください。
+
+短期目標：
+〔ここに貼る〕
+
+今月の様子：
+〔ここに貼る〕`},
+
+{id:"shokai",cat:"記録・書類",title:"主治医への照会文",
+desc:"聞きたいことを、失礼がなく答えやすい形の文書にします。",
+use:"聞きたいことを箇条書きで渡します。医師がチェックや短い記入で返せる形にしてもらうのがコツです。",
+prompt:`主治医に送る照会文を作ってください。
+・時候の挨拶は短く
+・質問は番号付きで、医師が短く答えられる形に
+・回答欄を各質問の下につける
+・A4一枚に収まる分量
+
+聞きたいこと：
+〔ここに箇条書きで〕`,
+demo:[["me","…聞きたいこと：入浴してよいか、運動の制限、訪問リハの必要性"],["ai","○○クリニック ○○先生\n\nいつも大変お世話になっております。\n下記の患者様のケアプラン作成にあたり、ご意見をいただきたくご連絡いたしました。\n\n1. 入浴について、制限はありますか。\n　□制限なし　□シャワーのみ可　□その他(　　　)\n2. 運動や外出について、注意点はありますか。\n　(　　　　　　　　　　)\n3. 訪問リハビリテーションの必要性について\n　□必要　□不要　□経過を見て判断\n\nお忙しいところ恐れ入りますが、よろしくお願いいたします。"]]},
+
+{id:"renraku",cat:"記録・書類",easy:1,title:"事業所への連絡文(FAX・メール)",
+desc:"日程変更や依頼など、毎日のちょっとした連絡文を一瞬で。",
+use:"要件を一行書くだけでOK。よく使う連絡は作り置きしておくと便利です。",
+prompt:`次の要件で、サービス事業所に送る連絡文を作ってください。
+簡潔で丁寧に、件名もつけてください。
+
+要件：
+〔例：来週水曜の訪問を木曜に変更したい。理由は通院のため〕`},
+
+{id:"photo",cat:"アセスメント・計画",star:1,title:"居室の写真からリスクを探す",
+desc:"部屋の写真を見せて、転倒や熱中症などの危険を一緒に探してもらいます。",
+use:"写真に人の顔・表札・郵便物・書類・薬の袋が写っていないか確認してから使います。ご本人とご家族の了承も取りましょう。最終判断は自分で行います。",
+prompt:`この写真は、〔80代で歩行がやや不安定な方〕が暮らす居室です。
+転倒・つまずき・熱中症・火災などのリスクになりそうな点を探してください。
+・危険度の高い順に5つまで
+・それぞれ「どこが」「なぜ危ないか」「すぐできる対策」を書く
+・写真から判断できないことは「確認が必要」と書く`,
+demo:[["me","(居室の写真を添付)＋上の頼み方"],["ai","写真から気づいた点です。危険度の高い順に挙げます。\n\n1. ベッド横の電気コード\n　どこ：ベッドから立ち上がった足元\n　なぜ：起き上がってすぐの一歩でつまずきやすい\n　対策：コードを壁沿いに這わせ、カバーで固定する\n\n2. 敷きっぱなしのラグの端のめくれ\n　なぜ：すり足歩行だと引っかかりやすい\n　対策：滑り止めシートで固定するか、撤去する\n\n3. 窓際に置かれた電気ストーブ\n　なぜ：カーテンに近く、火災の心配がある\n\n…(続く)\n\n※エアコンの有無や室温は写真からは判断できないため、確認が必要です。"]]},
+
+{id:"needs",cat:"アセスメント・計画",star:1,title:"聞き取った内容から生活課題を整理",
+desc:"アセスメントで聞いた話を、課題(ニーズ)の文章に言語化します。",
+use:"聞き取りのメモを貼ります。AIの案はたたき台にして、ご本人の言葉に近い表現に自分で直していきます。",
+prompt:`次のアセスメントのメモから、生活全般の解決すべき課題(ニーズ)を整理してください。
+・ご本人の視点で「〜したい」「〜できるようになりたい」の形で書く
+・優先度の高い順に3〜5つ
+・それぞれ、根拠になったメモの部分を添える
+
+メモ：
+〔ここに貼る〕`,
+demo:[["me","…メモ：独居。週末は長女が来る。料理は好きだったが最近は惣菜ばかり。買い物は徒歩10分のスーパー、最近は膝が痛く行けていない。「また自分で作りたい」"],["ai","1. 膝の痛みをやわらげ、歩いてスーパーへ買い物に行けるようになりたい\n　根拠：膝の痛みで買い物に行けていない\n\n2. 以前のように自分で料理を作りたい\n　根拠：「また自分で作りたい」との言葉、料理が好きだった\n\n3. 長女の来訪以外の日も、安心して一人で暮らしたい\n　根拠：独居で、週末以外は一人"]]},
+
+{id:"plan1-iko",cat:"アセスメント・計画",star:1,title:"第1表「意向を踏まえた課題分析の結果」",
+desc:"本人と家族から聞いた思いを、それぞれの言葉を活かして第1表の欄にまとめます。",
+use:"アセスメントで聞いた本人・家族の言葉をそのまま貼ります。「本人：」「長女：」と分けて書くと、AIが取り違えにくくなります。言葉の言い回しは、できるだけ本人のものを残しましょう。",
+prompt:`次の聞き取りメモをもとに、居宅サービス計画書(第1表)の
+「利用者及び家族の生活に対する意向を踏まえた課題分析の結果」の下書きを作ってください。
+・本人の意向、家族の意向を分けて書く
+・できるだけ本人・家族が実際に話した言葉を活かす
+・最後に、意向を踏まえた課題分析の結果を2〜3行でまとめる
+・メモにないことは書き足さない
+
+メモ：
+〔本人：〜〕
+〔長女：〜〕
+〔アセスメントで分かったこと：〜〕`,
+demo:[["me","…本人：「また自分で料理を作りたい。施設には入りたくない」\n長女：「一人暮らしを続けさせてあげたいが、転ばないか心配。仕事があるので来られるのは週末だけ」\n分かったこと：膝の痛みで買い物に行けていない、夜間トイレ3回"],["ai","【本人】\n「また自分で料理を作りたい」「施設には入らず、この家で暮らしたい」と話されている。\n\n【長女】\n「一人暮らしを続けさせてあげたい」と思う一方、転倒を心配されている。仕事のため、来られるのは週末のみ。\n\n【課題分析の結果】\n膝の痛みにより買い物や調理の機会が減っているが、本人には自宅で料理を続けたいという強い意欲がある。夜間のトイレ移動時の転倒を防ぎつつ、膝の痛みの軽減と家事の再開に向けた支援が必要である。"]]},
+
+{id:"plan1-hoshin",cat:"アセスメント・計画",title:"第1表「総合的な援助の方針」",
+desc:"チーム全体で共有する支援の方向性を、分かりやすい文章にまとめます。",
+use:"課題分析の結果と、予定しているサービスを貼ります。緊急時の連絡先や対応も入れるよう指示しておくと、書き漏れを防げます。",
+prompt:`次の内容をもとに、居宅サービス計画書(第1表)の「総合的な援助の方針」の下書きを作ってください。
+・本人の意欲や強み(できていること)を活かす書き方にする
+・チーム(本人・家族・各事業所)が同じ方向を向けるよう、具体的に書く
+・緊急時の連絡先と対応を最後に入れる(連絡先は〔 〕のままにする)
+・200〜300字程度
+
+課題分析の結果：
+〔ここに貼る〕
+予定しているサービス：
+〔例：通所介護 週2回、福祉用具(歩行器)〕`,
+demo:[["me","…課題分析の結果：(前の欄の内容)\n予定しているサービス：通所介護 週2回、訪問介護 週1回(買い物同行)、福祉用具(歩行器・センサーライト)"],["ai","「この家で、自分で料理を作りながら暮らしたい」という本人の思いを大切に、膝の痛みの軽減と歩行の安定を図ります。\n通所介護での運動の機会と、訪問介護による買い物同行で、少しずつ家事を再開できるよう支援します。夜間の転倒を防ぐため、福祉用具を活用し住環境を整えます。\n長女とは週末の様子を共有し、チーム全体で本人の暮らしを支えます。\n\n【緊急時の連絡先】\n長女〔連絡先〕／かかりつけ医〔連絡先〕／担当ケアマネ〔連絡先〕\n体調急変時は、かかりつけ医に連絡し、状況に応じて救急要請を行う。"]]},
+
+{id:"plan2",cat:"アセスメント・計画",star:1,title:"第2表「ニーズ・目標・サービス内容」一式",
+desc:"課題(ニーズ)から、長期・短期目標、サービス内容、種別、頻度までを表の形で下書きします。",
+use:"整理したニーズと、利用予定のサービスを貼ります。家族や地域の支援(インフォーマル)も入れると実際に近い案になります。期間は事業所の決まりに合わせて自分で入れます。AIの案はたたき台で、内容は本人と話し合って決めるものです。",
+prompt:`次のニーズと利用予定のサービスをもとに、居宅サービス計画書(第2表)の下書きを作ってください。
+ニーズごとに、次の項目を表の形で書いてください。
+・生活全般の解決すべき課題(ニーズ)
+・長期目標／短期目標(本人が読んでも分かる、評価しやすい表現で)
+・サービス内容(具体的に)
+・サービス種別(家族・地域などの支援も含める)
+・頻度
+期間は空欄のままにしてください。
+
+ニーズ：
+〔ここに貼る〕
+利用予定のサービス・支援：
+〔例：通所介護 週2回、訪問介護 週1回、福祉用具、長女の週末の訪問〕`,
+demo:[["me","…ニーズ：\n1. 膝の痛みをやわらげ、歩いてスーパーへ買い物に行けるようになりたい\n2. 以前のように自分で料理を作りたい\n利用予定：通所介護 週2回、訪問介護 週1回(買い物同行)、長女の週末の訪問"],["ai","■ニーズ1：膝の痛みをやわらげ、歩いてスーパーへ買い物に行けるようになりたい\n長期目標：歩いて近所のスーパーへ一人で買い物に行ける\n短期目標：ヘルパーと一緒に、休みながらスーパーまで歩ける\n\n・下肢筋力の運動、膝の負担を減らす歩き方の練習\n　種別：通所介護　頻度：週2回\n・スーパーへの買い物同行(歩行の見守り)\n　種別：訪問介護　頻度：週1回\n・週末の買い物の付き添い\n　種別：家族(長女)　頻度：週末\n\n■ニーズ2：以前のように自分で料理を作りたい\n長期目標：簡単な料理を自分で作って食べられる\n短期目標：ヘルパーと一緒に、週1回は1品作れる\n\n・調理の一部を本人が行い、見守り・手伝う\n　種別：訪問介護　頻度：週1回\n…"]]},
+
+{id:"goal",cat:"アセスメント・計画",title:"長期・短期目標の言い換え",
+desc:"ありきたりな目標を、具体的で評価しやすい表現に直します。",
+use:"今の目標の文を貼り、3案出してもらって選ぶのがおすすめです。",
+prompt:`次のケアプランの目標を、もっと具体的で、あとで評価しやすい表現に言い換えてください。
+・3案出してください
+・期間内に達成できる現実的な内容にする
+・本人が読んでも分かる言葉にする
+
+今の目標：
+〔例：安全に生活できる〕`},
+
+{id:"plan-check",cat:"アセスメント・計画",title:"第1表と第2表のつながりをチェック",
+desc:"できあがったケアプランを、AIに点検役として読んでもらいます。",
+use:"自分で作った第1表・第2表を貼ります(個人情報は置き換えて)。意向と目標がずれていないか、サービスの抜けがないかなど、提出前の見直しに使えます。",
+prompt:`次のケアプラン(第1表・第2表)を、経験のある主任介護支援専門員の目で点検してください。
+・第1表の意向・方針と、第2表のニーズ・目標がつながっているか
+・目標が具体的で、あとで評価できる表現になっているか
+・ニーズに対してサービスの抜けや重なりがないか
+・本人の強みや意欲が活かされているか
+問題点と直し方を、重要な順に5つまで挙げてください。
+
+第1表：
+〔ここに貼る〕
+第2表：
+〔ここに貼る〕`},
+
+{id:"heat",cat:"アセスメント・計画",title:"猛暑・熱中症対策のチェック",
+desc:"夏の訪問前に、利用者ごとの熱中症リスクを確認するチェックリストを作ります。",
+use:"利用者の状態を匿名で伝えると、その人に合った確認項目にしてくれます。",
+prompt:`次の状態の高齢者の、自宅での熱中症対策チェックリストを作ってください。
+・訪問時に目で見て確認できる項目
+・ご本人やご家族に聞く項目
+・すぐできる対策
+に分けて、各5項目以内でお願いします。
+
+状態：
+〔例：80代、独居、エアコンはあるが電気代を気にしてつけない、水分は少なめ〕`},
+
+{id:"easyword",cat:"利用者・家族",easy:1,star:1,title:"制度の説明をやさしい言葉に",
+desc:"区分変更・負担割合・ショートステイなど、伝わりにくい説明を言い換えます。",
+use:"説明したい内容と「誰に向けて」を指定します。文字を大きく印刷して渡すのにも使えます。",
+prompt:`「〔区分変更申請〕」について、
+介護保険を初めて使う80代の方とそのご家族に向けて、
+専門用語を使わず、中学生にも分かる言葉で説明してください。
+300字以内で、最後に「分からないことはケアマネにご相談ください」と入れてください。`,
+demo:[["me","「区分変更申請」について、介護保険を初めて使う80代の方とご家族に向けて…"],["ai","区分変更申請とは、「今の体の状態に合わせて、介護の必要の度合いを見直してもらう手続き」です。\n\n介護保険では、どのくらい手助けが必要かによって、使えるサービスの量が決まっています。入院などで以前より体が弱くなったときは、見直しをお願いすることで、今の状態に合ったサービスを受けやすくなります。\n\n手続きは市役所に申し込みます。書類の準備などはお手伝いできます。\n\n分からないことはケアマネにご相談ください。"]]},
+
+{id:"talk",cat:"利用者・家族",easy:1,title:"会話のきっかけを探す",
+desc:"ご本人の昔の仕事や若い頃の時代から、話がはずむ話題を考えてもらいます。",
+use:"生まれた年代、出身地方、昔の仕事など、個人が特定されない範囲の情報で頼みます。初回訪問や、口数の少ない方との関係づくりに。",
+prompt:`〔1940年代〕生まれ、〔東北地方〕の出身で、若い頃は〔昔の仕事〕をしていた方と、
+初めてお会いするときの会話のきっかけを考えてください。
+・その方が20代だった頃の流行や出来事
+・昔の仕事にまつわる質問
+・季節の話題
+を、それぞれ3つずつ、そのまま話せる問いかけの形で。`,
+demo:[["me","…若い頃は国鉄の車掌をしていた方と、初めてお会いするときの…"],["ai","【20代の頃の話題】\n・「東京オリンピックの年は、どちらにいらっしゃいましたか？」\n・「新幹線が通ったとき、乗りに行かれましたか？」\n\n【お仕事の話題】\n・「車掌さんの頃、一番長く乗った路線はどこでしたか？」\n・「雪の日の運行は大変だったんじゃないですか？」\n\n【季節の話題】\n・「この時期、ふるさとではどんな物を食べていましたか？」\n…"]]},
+
+{id:"family",cat:"利用者・家族",title:"家族への言いにくい連絡の文面",
+desc:"サービス変更のお願いなど、伝え方に迷う連絡の下書きを作ります。",
+use:"伝えたいことと、相手について心配な点を書きます。3通りの言い方から、関係性に合うものを選びます。",
+prompt:`ご家族に次のことを伝えたいのですが、言い方に迷っています。
+相手を責めず、気持ちに寄り添いながら、伝えるべきことは伝わる文面を
+「やわらかめ」「標準」「はっきりめ」の3通り作ってください。
+
+伝えたいこと：
+〔ここに書く〕
+相手について心配な点：
+〔例：介護を一人で抱えていて疲れている様子〕`},
+
+{id:"douomou",cat:"相談のコツ",easy:1,star:1,title:"「教えて」ではなく「どう思う？」と相談する",
+desc:"自分の考えを見せて意見を求めると、使える答えが返ってきます。",
+use:"自分の案を先に書いてから聞くのがポイント。AIは正解を出す機械ではなく、壁打ち相手として使うと力を発揮します。",
+prompt:`次のケースで、私は〔自分の案〕と考えています。
+あなたはどう思いますか？
+良い点と、見落としていそうな点を教えてください。
+
+ケース：
+〔個人が特定されない形で〕`,
+demo:[["me","80代男性、妻と二人暮らし。最近物忘れが増えて妻が疲れている。私は「まずデイを週1から始める」のが良いと考えています。どう思いますか？"],["ai","良い点\n・週1回なら本人の負担が少なく、慣れる時間がとれます\n・奥さまが休める時間が確実にできます\n\n見落としていそうな点\n・ご本人が通所を嫌がった場合の代わりの案はありますか(訪問系から入る、など)\n・物忘れの受診はお済みでしょうか。診断によって使える支援が変わることがあります\n・奥さま自身の相談先(家族会、地域包括)もつないでおくと安心です"]]},
+
+{id:"roles",cat:"相談のコツ",title:"複数の立場で意見を出させる",
+desc:"本人・家族・医師・ヘルパーなど、立場を変えて意見を出させ、最後に議論させます。",
+use:"支援方針に迷ったとき、担当者会議の前の準備に。一人では気づけない視点が見えてきます。",
+prompt:`次のケースについて、
+①ご本人 ②主介護者の家族 ③主治医 ④訪問介護のサービス提供責任者
+の4つの立場から、それぞれ意見を出してください。
+最後に4人で話し合ったら、どんな結論になりそうかもまとめてください。
+
+ケース：
+〔個人が特定されない形で〕`},
+
+{id:"hanron",cat:"相談のコツ",title:"あえて反論させる",
+desc:"自分の案の弱いところを、AIに厳しく突いてもらいます。",
+use:"ケアプランや文書を作ったあとの見直しに。AIは頼まないと褒めがちなので、反論役をはっきり頼むのがコツです。",
+prompt:`次の〔ケアプラン案〕について、あえて反対の立場から厳しく指摘してください。
+遠慮はいりません。
+「なぜ問題か」と「どう直せばよいか」をセットで、3つまで挙げてください。
+
+内容：
+〔ここに貼る〕`},
+
+{id:"check",cat:"気をつけること",easy:1,star:1,title:"AIの答えをうのみにしない",
+desc:"AIはもっともらしい間違いを言うことがあります。制度や数字は必ず原典で確認。",
+checks:["介護報酬の単位数・加算要件 → 通知や告示で確認","市区町村ごとのルール → 保険者に確認","薬・病気の情報 → 主治医・薬剤師に確認","記録に使う文章 → 事実と違う内容が足されていないか読み直す"],
+prompt:`今の回答のうち、
+・確実に言えること
+・自信がないこと、確認が必要なこと
+を分けて教えてください。
+確認が必要なものは、何で確かめればよいかも書いてください。`},
+
+{id:"rule",cat:"気をつけること",title:"事業所で使い方のルールを決める",
+desc:"一人ひとりの判断に任せず、事業所として使ってよい範囲を決めておきます。",
+checks:["使ってよいAIサービスを決める","入力内容をAIの学習に使わない設定を確認する","入力してよい情報・いけない情報を決める","AIで作った文章は必ず担当者が読んで責任を持つ","間違って入力したときの相談先を決める"],
+prompt:`居宅介護支援事業所で、職員が生成AIを業務に使うときのルール案を作ってください。
+・使ってよい場面／使ってはいけない場面
+・個人情報の扱い
+・AIが作った文章の確認方法
+を、A4一枚程度でお願いします。`},
+
+{id:"project",cat:"慣れてきたら",nosafe:1,title:"よく使う指示を「プロジェクト」に覚えさせる",
+desc:"毎回同じ説明を書かなくても、決まった書き方で返してくれるようにします。",
+use:"Claudeの「プロジェクト」には共通の指示を置いておけます(ChatGPTやGeminiにも似た機能があります)。事業所の記録の書き方を入れておくと便利です。",
+file:"プロジェクトの指示",
+prompt:`あなたは居宅介護支援事業所の記録作成を手伝うアシスタントです。
+・支援経過記録は「である調」の簡潔な文で書く
+・事実と判断を分けて書く
+・メモにないことは書き足さず、不明点は〔要確認〕とする
+・個人名が含まれていたら、記録を作る前に指摘する`},
+
+{id:"pdf",cat:"慣れてきたら",easy:1,title:"長い通知やPDFを要約させる",
+desc:"報酬改定の資料や研修資料など、長い文書の要点を短くまとめます。",
+use:"PDFや資料の写真を添付して頼みます。大事な部分は原文でも確かめましょう。",
+prompt:`添付した資料を、居宅のケアマネジャーに関係する部分だけに絞って要約してください。
+・変わる点を箇条書きで
+・いつから変わるか
+・事業所でやっておくべきこと
+に分けてください。`},
+
+{id:"skill",cat:"慣れてきたら",nosafe:1,title:"決まった手順を「スキル」として登録する",
+desc:"定型作業の手順を一度書いておけば、呼び出すだけで同じやり方で動きます。",
+use:"Claudeでは手順をまとめた「スキル」を登録できます。説明文に合う依頼のとき、自動で使われます。",
+file:"keika-kiroku/SKILL.md",
+prompt:`---
+name: keika-kiroku
+description: 訪問メモや音声入力の文章を、支援経過記録(第5表)に整えるときに使う
+---
+
+次の手順で記録を作ってください。
+1. 個人名・住所が含まれていたら、まずそれを指摘する
+2. 事実と、ケアマネの判断・今後の対応を分ける
+3. 「である調」の簡潔な文にする
+4. メモにないことは書き足さない。不明点は〔要確認〕`}
+];
+
+const $=s=>document.querySelector(s);
+const grid=$("#grid"),tabs=$("#tabs"),q=$("#q"),fEasy=$("#f-easy"),fStar=$("#f-star"),count=$("#count"),toast=$("#toast");
+const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
+let cat="すべて",agreed=false;const open=new Set(),shown=new Set();
+try{const s=JSON.parse(localStorage.getItem("cmai3")||"{}");if(CATS.includes(s.cat))cat=s.cat;agreed=!!s.agreed}catch(e){}
+function save(){try{localStorage.setItem("cmai3",JSON.stringify({cat,agreed}))}catch(e){}}
+const SAFE="※個人が特定できる情報(氏名・住所・番号など)が含まれていたら、作業の前に指摘してください。";
+const full=i=>i.nosafe?i.prompt:i.prompt+"\n\n"+SAFE;
+const step0=$("#step0"),agree=$("#agree");
+function syncStep0(){document.querySelector("header.top").hidden=!agreed;agree.checked=agreed;step0.classList.toggle("done",agreed);step0.classList.remove("peek");$("#s0-more").textContent="表を見る"}
+agree.addEventListener("change",()=>{agreed=agree.checked;save();syncStep0();render();if(agreed){showToast("確認しました。頼み方が表示されました");window.scrollTo({top:0,behavior:reduce?"auto":"smooth"})}});
+$("#s0-more").addEventListener("click",()=>{const p=step0.classList.toggle("peek");$("#s0-more").textContent=p?"たたむ":"表を見る"});
+syncStep0();
+const esc=s=>s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+function renderTabs(){
+  tabs.innerHTML=CATS.map(c=>`<button class="tab" type="button" aria-pressed="${c===cat}" data-cat="${c}">${c}</button>`).join("");
+}
+function match(i){
+  if(cat!=="すべて"&&i.cat!==cat)return false;
+  if(fEasy.checked&&!i.easy)return false;
+  if(fStar.checked&&!i.star)return false;
+  const t=q.value.trim().toLowerCase();
+  return !t||[i.title,i.desc,i.use||"",i.prompt,i.cat,(i.checks||[]).join(" ")].join(" ").toLowerCase().includes(t);
+}
+function firstLine(p){return p.split("\n").find(l=>l.trim()&&l.trim()!=="---")}
+function card(i){
+  const o=open.has(i.id);
+  const marked=esc(i.prompt).replace(/〔(.*?)〕/g,"<mark>〔$1〕</mark>")+(i.nosafe?"":`\n\n<span class="safe">${SAFE}</span>`);
+  let h=`<article class="card${o?" open":""}" id="c-${i.id}">
+   <div class="chips"><span class="chip">${i.cat}</span>${i.star?'<span class="chip star">定番</span>':""}${i.easy?'<span class="chip">はじめての人向け</span>':""}</div>
+   <h3>${esc(i.title)}</h3><p class="desc">${esc(i.desc)}</p>
+   ${i.use?`<div class="use"><b>活用例</b>${esc(i.use)}</div>`:""}
+   ${i.checks?`<ul class="checks">${i.checks.map(c=>`<li>${esc(c)}</li>`).join("")}</ul>`:""}
+   <div class="actions">${o?`<button class="btn ghost" type="button" data-toggle="${i.id}">■ 閉じる</button>`:`<button class="btn" type="button" data-toggle="${i.id}">▶ 頼み方を見る</button>`}
+   ${o&&agreed&&i.demo?`<button class="btn warm" type="button" data-play="${i.id}">▶ 実行イメージを見る</button>`:""}</div>`;
+  if(o&&!agreed){
+    h+=`<div class="gate"><b>STEP 0 がまだです</b><span>頼み方を使う前に、ページ上部の置き換え表を確認してください。氏名・住所・番号は入れず、「本人」「80代」「かかりつけ医」などに置き換えます。</span><div class="actions"><button class="btn" type="button" data-step0>置き換え表を見る</button></div></div>`;
+  }else if(o){
+    h+=`<div class="cmd"><span class="p">&gt;</span><span>${esc(firstLine(i.prompt))}<span class="cur"></span></span></div>
+    ${i.demo?`<div class="term" id="t-${i.id}"${shown.has(i.id)?"":" hidden"}></div>`:""}
+    <div><div class="code"><div class="code-bar"><span>${esc(i.file||"AIに貼る文章")}</span><button class="copy" type="button" data-copy="${i.id}">コピー</button></div><pre id="p-${i.id}">${marked}</pre></div>
+    ${/〔/.test(i.prompt)?'<p class="hint"><mark>〔 〕</mark>の部分を自分の内容に書き換えて送信します</p>':""}</div>`;
+  }
+  return h+`</article>`;
+}
+function render(){
+  renderTabs();
+  if(!agreed){count.textContent="";grid.innerHTML=`<div class="locked"><b>頼み方はまだ表示されていません</b><span>上の置き換え表を確認して、「置き換えてから使います」にチェックすると、ここに頼み方の一覧が表示されます。</span></div>`;return}
+  const list=ITEMS.filter(match);
+  count.textContent=`${list.length} 件`;
+  grid.innerHTML=list.length?list.map(card).join(""):`<p class="none">見つかりませんでした。言葉を変えるか、カテゴリを「すべて」にしてみてください。</p>`;
+  shown.forEach(id=>{const t=document.getElementById("t-"+id);if(t)fill(t,ITEMS.find(x=>x.id===id),true)});
+}
+function fill(t,i,instant){
+  t.hidden=false;t.innerHTML="";
+  const run=(t._run=(t._run||0)+1);
+  (async()=>{
+    for(const [w,text] of i.demo){
+      if(t._run!==run)return;
+      const d=document.createElement("div");d.className=w;t.appendChild(d);
+      if(instant||reduce||w==="me"){d.textContent=text;if(!(instant||reduce))await new Promise(r=>setTimeout(r,450));continue}
+      for(let k=0;k<text.length;k+=3){if(t._run!==run)return;d.textContent=text.slice(0,k+3);t.scrollTop=t.scrollHeight;await new Promise(r=>setTimeout(r,14))}
+    }
+    const n=document.createElement("small");n.textContent="※ 説明用の例です";t.appendChild(n);
+  })();
+}
+function showToast(m){toast.textContent=m;toast.classList.add("show");clearTimeout(showToast.t);showToast.t=setTimeout(()=>toast.classList.remove("show"),1800)}
+
+tabs.addEventListener("click",e=>{const b=e.target.closest("[data-cat]");if(!b)return;cat=b.dataset.cat;save();render();const hd=document.querySelector("header.top"),mn=document.querySelector("main");window.scrollTo({top:Math.max(0,mn.getBoundingClientRect().top+window.scrollY-hd.offsetHeight),behavior:reduce?"auto":"smooth"});b.scrollIntoView?.({block:"nearest",inline:"nearest"})});
+[fEasy,fStar].forEach(el=>el.addEventListener("change",render));
+q.addEventListener("input",render);
+grid.addEventListener("click",e=>{
+  const tg=e.target.closest("[data-toggle]");
+  if(tg){const id=tg.dataset.toggle;if(open.has(id)){open.delete(id);shown.delete(id)}else open.add(id);render();
+    document.getElementById("c-"+id)?.scrollIntoView({block:"nearest",behavior:reduce?"auto":"smooth"});return}
+  if(e.target.closest("[data-step0]")){step0.scrollIntoView({behavior:reduce?"auto":"smooth"});step0.classList.add("flash");setTimeout(()=>step0.classList.remove("flash"),1500);return}
+  const p=e.target.closest("[data-play]");
+  if(p){const id=p.dataset.play;shown.add(id);fill(document.getElementById("t-"+id),ITEMS.find(x=>x.id===id),false);return}
+  const cp=e.target.closest("[data-copy]");
+  if(cp){const i=ITEMS.find(x=>x.id===cp.dataset.copy);
+    const ok=()=>{cp.textContent="コピー済み";cp.classList.add("done");showToast("コピーしました。AIの入力欄に貼り付けてください")};
+    const fb=()=>{const r=document.createRange();r.selectNodeContents(document.getElementById("p-"+i.id));const s=getSelection();s.removeAllRanges();s.addRange(r);showToast("文章を選択しました。長押しでコピーしてください")};
+    try{navigator.clipboard.writeText(full(i).replace(/　← .*$/gm,"")).then(ok).catch(fb)}catch(err){fb()}}
+});
+render();
+</script>
+
+</body>
+</html>
